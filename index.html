@@ -33,13 +33,66 @@
     border: 0;
   }
 
-  @media (max-width: 768px) {
-    .image-wrapper {
-      padding: 0;
-    }
+  /* Hover card styles */
+  .hover-target {
+    position: relative;
+    display: inline-block;
+  }
 
-    #Table_01 {
-      min-width: 320px;
+  .hover-card {
+    position: absolute;
+    left: 110%;
+    top: 0;
+    width: 280px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    padding: 12px;
+    display: none;
+    z-index: 1000;
+    text-align: left;
+  }
+
+  .hover-target:hover .hover-card,
+  .hover-target.show .hover-card,
+  .hover-target:focus-within .hover-card {
+    display: block;
+  }
+
+  .hover-card img.card-thumb {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .hover-card h3 {
+    margin: 0 0 6px 0;
+    font-size: 16px;
+  }
+
+  .hover-card p {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .card-cta {
+    display: inline-block;
+    padding: 6px 10px;
+    background: #0077cc;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  @media (max-width: 600px) {
+    .hover-card {
+      left: auto;
+      right: 0;
+      width: 220px;
     }
   }
 </style>
@@ -58,10 +111,23 @@
 		<td colspan="18">
 			<img src="images/MANILA_FLOOR_14-slicepsd-2_02.png" width="3072" height="184" alt=""></td>
 		<td rowspan="2">
-			<a href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1403"
-				onmouseover="window.status='CR 14.03';  return true;"
-				onmouseout="window.status='';  return true;">
-				<img src="images/MANILA_FLOOR_14-slicepsd_03.png" width="211" height="201" border="0" alt="CR 14.03"></a></td>
+			<div class="hover-target">
+				<a href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1403"
+					onmouseover="window.status='CR 14.03';  return true;"
+					onmouseout="window.status='';  return true;">
+					<img src="images/MANILA_FLOOR_14-slicepsd_03.png" width="211" height="201" border="0" alt="CR 14.03"></a>
+
+				<!-- Hover card shown on hover or tap -->
+				<div class="hover-card" role="dialog" aria-hidden="true">
+					<img class="card-thumb" src="images/MANILA_FLOOR_14-slicepsd_03.png" alt="CR 14.03 thumbnail">
+					<div class="card-content">
+						<h3>CR 14.03</h3>
+						<p>Small collaboration room — capacity 4–6. Click the button to open the 360° tour.</p>
+						<a class="card-cta" href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1403">Open Tour →</a>
+					</div>
+				</div>
+			</div>
+		</td>
 		<td colspan="3" rowspan="6">
 			<img src="images/MANILA_FLOOR_14-slicepsd-2_04.png" width="649" height="692" alt=""></td>
 		<td>
@@ -263,5 +329,38 @@
 </table>
 </div>
 <!-- End Save for Web Slices -->
+
+<script>
+// Enable tap-to-toggle for touch devices so the hover card is accessible on mobile
+(function(){
+  if (!('ontouchstart' in window)) return;
+  document.addEventListener('click', function(e){
+    var target = e.target;
+    // find closest hover-target
+    while(target && !target.classList) target = target.parentNode;
+    if(!target) return;
+    if(target.classList.contains('hover-target')) {
+      // toggle
+      if(target.classList.contains('show')){
+        target.classList.remove('show');
+        var card = target.querySelector('.hover-card'); if(card) card.setAttribute('aria-hidden','true');
+      } else {
+        // hide other open cards
+        var open = document.querySelectorAll('.hover-target.show');
+        open.forEach(function(o){ o.classList.remove('show'); var c=o.querySelector('.hover-card'); if(c) c.setAttribute('aria-hidden','true'); });
+        target.classList.add('show');
+        var card = target.querySelector('.hover-card'); if(card) card.setAttribute('aria-hidden','false');
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    // click outside: close any open
+    var open = document.querySelectorAll('.hover-target.show');
+    open.forEach(function(o){ o.classList.remove('show'); var c=o.querySelector('.hover-card'); if(c) c.setAttribute('aria-hidden','true'); });
+  }, false);
+})();
+</script>
+
 </body>
 </html>
