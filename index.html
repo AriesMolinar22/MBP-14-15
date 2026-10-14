@@ -43,10 +43,10 @@
     position: absolute;
     left: 110%;
     top: 0;
-    width: 280px;
+    width: 320px;
     background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.18);
     padding: 12px;
     display: none;
     z-index: 1000;
@@ -59,12 +59,14 @@
     display: block;
   }
 
-  .hover-card img.card-thumb {
+  .hover-card iframe.card-thumb {
     width: 100%;
-    height: auto;
-    border-radius: 4px;
+    height: 180px;
+    border: 0;
+    border-radius: 6px;
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    background: #f2f2f2;
   }
 
   .hover-card h3 {
@@ -92,7 +94,7 @@
     .hover-card {
       left: auto;
       right: 0;
-      width: 220px;
+      width: 230px;
     }
   }
 </style>
@@ -117,12 +119,11 @@
 					onmouseout="window.status='';  return true;">
 					<img src="images/MANILA_FLOOR_14-slicepsd_03.png" width="211" height="201" border="0" alt="CR 14.03"></a>
 
-				<!-- Hover card shown on hover or tap -->
 				<div class="hover-card" role="dialog" aria-hidden="true">
-					<img class="card-thumb" src="images/MANILA_FLOOR_14-slicepsd_03.png" alt="CR 14.03 thumbnail">
+					<iframe class="card-thumb" src="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1403" title="CR 14.03 tour" loading="lazy" allowfullscreen></iframe>
 					<div class="card-content">
 						<h3>CR 14.03</h3>
-						<p>Small collaboration room — capacity 4–6. Click the button to open the 360° tour.</p>
+						<p>Small collaboration room — capacity 4–6. Open the interactive tour for a full view.</p>
 						<a class="card-cta" href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1403">Open Tour →</a>
 					</div>
 				</div>
@@ -331,33 +332,24 @@
 <!-- End Save for Web Slices -->
 
 <script>
-// Enable tap-to-toggle for touch devices so the hover card is accessible on mobile
 (function(){
   if (!('ontouchstart' in window)) return;
   document.addEventListener('click', function(e){
     var target = e.target;
-    // find closest hover-target
-    while(target && !target.classList) target = target.parentNode;
-    if(!target) return;
-    if(target.classList.contains('hover-target')) {
-      // toggle
-      if(target.classList.contains('show')){
-        target.classList.remove('show');
-        var card = target.querySelector('.hover-card'); if(card) card.setAttribute('aria-hidden','true');
-      } else {
-        // hide other open cards
-        var open = document.querySelectorAll('.hover-target.show');
-        open.forEach(function(o){ o.classList.remove('show'); var c=o.querySelector('.hover-card'); if(c) c.setAttribute('aria-hidden','true'); });
-        target.classList.add('show');
-        var card = target.querySelector('.hover-card'); if(card) card.setAttribute('aria-hidden','false');
-      }
-      e.preventDefault();
-      e.stopPropagation();
+    while(target && target.nodeType === 1 && !target.classList.contains('hover-target')) {
+      target = target.parentNode;
+    }
+    if(!target) {
+      var open = document.querySelectorAll('.hover-target.show');
+      open.forEach(function(o){ o.classList.remove('show'); });
       return;
     }
-    // click outside: close any open
+    var isOpen = target.classList.contains('show');
     var open = document.querySelectorAll('.hover-target.show');
-    open.forEach(function(o){ o.classList.remove('show'); var c=o.querySelector('.hover-card'); if(c) c.setAttribute('aria-hidden','true'); });
+    open.forEach(function(o){ if(o !== target) o.classList.remove('show'); });
+    target.classList.toggle('show', !isOpen);
+    e.preventDefault();
+    e.stopPropagation();
   }, false);
 })();
 </script>
