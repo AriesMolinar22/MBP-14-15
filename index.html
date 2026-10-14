@@ -10,6 +10,7 @@
   }
 
   .image-wrapper {
+    position: relative;
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -31,6 +32,62 @@
     max-width: 100%;
     height: auto;
     border: 0;
+  }
+
+  .map-markers {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .room-marker {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: #ff3b30;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    text-decoration: none;
+    color: #fff;
+    font-size: 9px;
+    font-weight: bold;
+    line-height: 1;
+  }
+
+  .room-marker::before {
+    content: "";
+    width: 0;
+    height: 0;
+  }
+
+  .room-marker .label {
+    position: absolute;
+    left: 22px;
+    top: -8px;
+    background: rgba(0,0,0,0.72);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 5px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    pointer-events: none;
+  }
+
+  .room-marker:hover .label,
+  .room-marker:focus .label {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .hover-target {
@@ -319,6 +376,17 @@
 		<td></td>
 	</tr>
 </table>
+
+<div class="map-markers" aria-label="Map room markers">
+  <a class="room-marker" href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1403" style="left: 72%; top: 19%;"><span class="label">CR 14.03</span></a>
+  <a class="room-marker" href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/toilet" style="left: 60%; top: 28%;"><span class="label">Women Toilet Eest</span></a>
+  <a class="room-marker" href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/huddle-room-1401" style="left: 44%; top: 32%;"><span class="label">Huddle Room 14.01</span></a>
+  <a class="room-marker" href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/elevator-14" style="left: 41%; top: 58%;"><span class="label">Elevator 14th</span></a>
+  <a class="room-marker" href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1402" style="left: 58%; top: 61%;"><span class="label">CR 14.02</span></a>
+  <a class="room-marker" href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/collab" style="left: 74%; top: 60%;"><span class="label">Collab Room</span></a>
+  <a class="room-marker" href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/fire-exit" style="left: 50%; top: 72%;"><span class="label">Fire Exit 2</span></a>
+  <a class="room-marker" href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/printer" style="left: 80%; top: 72%;"><span class="label">Printer</span></a>
+</div>
 </div>
 <!-- End Save for Web Slices -->
 
@@ -358,7 +426,7 @@
     var wrapper = document.createElement('span');
     wrapper.className = 'hover-target';
 
-    if (!link.parentNode || link.parentNode.classList && link.parentNode.classList.contains('hover-target')) {
+    if (link.parentNode && link.parentNode.classList && link.parentNode.classList.contains('hover-target')) {
       return;
     }
 
