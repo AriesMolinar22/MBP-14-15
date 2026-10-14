@@ -33,7 +33,6 @@
     border: 0;
   }
 
-  /* Hover card styles */
   .hover-target {
     position: relative;
     display: inline-block;
@@ -51,6 +50,7 @@
     display: none;
     z-index: 1000;
     text-align: left;
+    border: 1px solid rgba(0,0,0,0.06);
   }
 
   .hover-target:hover .hover-card,
@@ -59,7 +59,7 @@
     display: block;
   }
 
-  .hover-card iframe.card-thumb {
+  .hover-card iframe {
     width: 100%;
     height: 180px;
     border: 0;
@@ -72,11 +72,14 @@
   .hover-card h3 {
     margin: 0 0 6px 0;
     font-size: 16px;
+    line-height: 1.3;
+    color: #111;
   }
 
   .hover-card p {
-    margin: 0 0 8px 0;
+    margin: 0 0 10px 0;
     font-size: 14px;
+    line-height: 1.45;
     color: #333;
   }
 
@@ -113,22 +116,10 @@
 		<td colspan="18">
 			<img src="images/MANILA_FLOOR_14-slicepsd-2_02.png" width="3072" height="184" alt=""></td>
 		<td rowspan="2">
-			<div class="hover-target">
-				<a href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1403"
-					onmouseover="window.status='CR 14.03';  return true;"
-					onmouseout="window.status='';  return true;">
-					<img src="images/MANILA_FLOOR_14-slicepsd_03.png" width="211" height="201" border="0" alt="CR 14.03"></a>
-
-				<div class="hover-card" role="dialog" aria-hidden="true">
-					<iframe class="card-thumb" src="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1403" title="CR 14.03 tour" loading="lazy" allowfullscreen></iframe>
-					<div class="card-content">
-						<h3>CR 14.03</h3>
-						<p>Small collaboration room — capacity 4–6. Open the interactive tour for a full view.</p>
-						<a class="card-cta" href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1403">Open Tour →</a>
-					</div>
-				</div>
-			</div>
-		</td>
+			<a href="https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1403"
+				onmouseover="window.status='CR 14.03';  return true;"
+				onmouseout="window.status='';  return true;">
+				<img src="images/MANILA_FLOOR_14-slicepsd_03.png" width="211" height="201" border="0" alt="CR 14.03"></a></td>
 		<td colspan="3" rowspan="6">
 			<img src="images/MANILA_FLOOR_14-slicepsd-2_04.png" width="649" height="692" alt=""></td>
 		<td>
@@ -332,27 +323,75 @@
 <!-- End Save for Web Slices -->
 
 <script>
-(function(){
-  if (!('ontouchstart' in window)) return;
-  document.addEventListener('click', function(e){
-    var target = e.target;
-    while(target && target.nodeType === 1 && !target.classList.contains('hover-target')) {
-      target = target.parentNode;
-    }
-    if(!target) {
-      var open = document.querySelectorAll('.hover-target.show');
-      open.forEach(function(o){ o.classList.remove('show'); });
+(function () {
+  var roomMap = {
+    'https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1403': 'CR 14.03',
+    'https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/toilet': 'Women Toilet Eest',
+    'https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/huddle-room-1401': 'Huddle Room 14.01',
+    'https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/elevator-14': 'Elevator 14th',
+    'https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/cr-1402': 'CR 14.02',
+    'https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/collab': 'Collab Room',
+    'https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/fire-exit': 'Fire Exit 2',
+    'https://tour.panoee.net/6aab9760cfc0acdfb3e1cdc6/printer': 'Printer'
+  };
+
+  function makeHoverCard(title, url) {
+    var card = document.createElement('div');
+    card.className = 'hover-card';
+    card.innerHTML = [
+      '<iframe src="' + url + '" title="' + title + ' tour" loading="lazy" allowfullscreen></iframe>',
+      '<div>',
+      '<h3>' + title + '</h3>',
+      '<p>Interactive tour for ' + title + '.</p>',
+      '<a class="card-cta" href="' + url + '">Open Tour →</a>',
+      '</div>'
+    ].join('');
+    return card;
+  }
+
+  var anchors = document.querySelectorAll('a[href^="https://tour.panoee.net/"]');
+
+  anchors.forEach(function (link) {
+    var href = link.getAttribute('href');
+    var title = roomMap[href] || link.getAttribute('alt') || link.getAttribute('title') || 'Room';
+
+    var wrapper = document.createElement('span');
+    wrapper.className = 'hover-target';
+
+    if (!link.parentNode || link.parentNode.classList && link.parentNode.classList.contains('hover-target')) {
       return;
     }
-    var isOpen = target.classList.contains('show');
-    var open = document.querySelectorAll('.hover-target.show');
-    open.forEach(function(o){ if(o !== target) o.classList.remove('show'); });
-    target.classList.toggle('show', !isOpen);
-    e.preventDefault();
-    e.stopPropagation();
-  }, false);
+
+    link.parentNode.insertBefore(wrapper, link);
+    wrapper.appendChild(link);
+    wrapper.appendChild(makeHoverCard(title, href));
+  });
+
+  if ('ontouchstart' in window) {
+    document.addEventListener('click', function (event) {
+      var target = event.target;
+      while (target && target !== document && !target.classList.contains('hover-target')) {
+        target = target.parentNode;
+      }
+
+      if (!target || !target.classList || !target.classList.contains('hover-target')) {
+        document.querySelectorAll('.hover-target.show').forEach(function (node) {
+          node.classList.remove('show');
+        });
+        return;
+      }
+
+      var open = document.querySelectorAll('.hover-target.show');
+      open.forEach(function (node) {
+        if (node !== target) node.classList.remove('show');
+      });
+
+      target.classList.toggle('show');
+      event.preventDefault();
+      event.stopPropagation();
+    }, false);
+  }
 })();
 </script>
-
 </body>
 </html>
